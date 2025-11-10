@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Ouvidoria - SESAU/AL</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>Ouvidoria - Secretaria de Estado da Saúde de Alagoas</h1>
+  <button id="logoutBtn" onclick="logout()">Sair</button>
+</header>
+
+
+<!-- MODAL DE LOGIN -->
+<div id="loginModal">
+  <div id="loginBox">
+    <h2>Login</h2>
+
+    <label>Selecione sua unidade:</label>
+    <select id="unidadeSelect">
+      <option value="">-- Selecione --</option>
+      <option value="Hospital Regional Alto Sertão">Hospital Regional Alto Sertão</option>
+      <option value="Hospital Dr.DanielHouly">Hospital Dr.DanielHouly</option>
+      <option value="Hemoal Arapiraca">Hemoal Arapiraca</option>
+      <option value="Hemoal Maceió">Hemoal Maceió</option>
+      <option value="Hospital Geral Eestado">Hospital Geral Eestado</option>
+      <option value="Hospital da Mulher">Hospital da Mulher</option>
+      <option value="Hospital do Coração">Hospital do Coração</option>
+      <option value="Hospital Metropolitano">Hospital Metropolitano</option>
+      <option value="Hospital Regional da Mata">Hospital Regional da Mata</option>
+      <option value="Ouvidoria de Palmeira dos Indios">Ouvidoria de Palmeira dos Indios</option>
+      <option value="Ouvidoria de São José da Laje">Ouvidoria de São José da Laje</option>
+      <option value="Ouvidoria Arapiraca">Ouvidoria Arapiraca</option>
+      <option value="Ouvidoria Atalaia">Ouvidoria Atalaia</option>
+      <option value="Ouvidoria de São Miguel dos Campos">Ouvidoria de São Miguel dos Campos</option>
+      <option value="Ouvidoria Teotônio Vilela">Ouvidoria Teotônio Vilela</option>
+      <option value="Ouvidoria União dos Palmares">Ouvidoria União dos Palmares</option>
+      <option value="Admin">Admin</option>
+    </select>
+
+
+    <label>Senha:</label>
+    <input type="password" id="senhaInput" placeholder="Digite sua senha">
+
+    <button onclick="fazerLogin()">Entrar</button>
+  </div>
+</div>
+
+<!-- CONTEÚDO DAS UNIDADES -->
+<div id="app">
+  <div class="content-box" id="boxUnidade">
+    <h2 id="titulo-unidade"></h2>
+
+    <label>Mês de referência:</label>
+    <input type="month" id="mesReferencia">
+
+    <div id="formCampos"></div>
+
+    <div class="botoes">
+      <button onclick="salvarDados()">Salvar Dados</button>
+      <button onclick="exportarXLS()">Exportar XLS</button>
+      <button class="btn-danger" onclick="limparDadosMes()">🗑️ Limpar Dados do Mês</button>
+    </div>
+  </div>
+
+  <div class="chart-container" id="chartsUnidade">
+    <div class="chart-box"><canvas id="graficoPizza" width="400" height="300"></canvas></div>
+    <div class="chart-box"><canvas id="graficoBarra" width="400" height="300"></canvas></div>
+  </div>
+</div>
+
+<!-- CONTEÚDO DO ADMIN -->
+<div id="adminPanel">
+  <div class="content-box">
+    <h2>Painel Geral - Monitoramento de Todas as Unidades</h2>
+    <div class="botoes">
+      <button onclick="gerarGraficosAdmin()">Atualizar Gráficos</button>
+      <button onclick="exportarGeral()">📊 Exportar Excel Geral</button>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <div class="chart-box">
+      <h3>Total de Demandas por Unidade</h3>
+      <canvas id="graficoComparativo" width="500" height="300"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Evolução Mensal das Unidades</h3>
+      <canvas id="graficoEvolucao" width="500" height="300"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
