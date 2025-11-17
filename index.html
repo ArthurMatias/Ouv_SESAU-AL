@@ -2,99 +2,199 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ouvidoria - SESAU/AL</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="megaphone.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 
-<header>
-  <h1>Ouvidoria - Secretaria de Estado da Saúde de Alagoas</h1>
-  <button id="logoutBtn" onclick="logout()">Sair</button>
-</header>
+  <!-- TELA DE LOGIN -->
+  <div id="loginScreen">
+    <!-- Lado Esquerdo - Azul -->
+    <div class="login-left">
+      <div class="login-left-content">
+        <div class="logo-icon"><img width="50px" src="icon-megaphone.svg" alt="megaphone"></div>
+        <div>
+          <h1>Ouvidoria</h1>
+          <p class="subtitle">Secretaria de Estado da Saúde de Alagoas</p>
+        </div>
+        <button id="logoutBtnLogin" class="btn-logout-login" onclick="logout()" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sair
+        </button>
+      </div>
+    </div>
 
+    <!-- Lado Direito - Login Form -->
+    <div class="login-right">
+      <div class="login-box">
+        <h2>Bem-vindo(a)</h2>
+        <p class="login-description">Acesse o sistema de ouvidoria</p>
+        
+        <form id="loginForm" onsubmit="event.preventDefault(); fazerLogin();">
+          <div class="form-group">
+            <label for="unidadeSelect">Selecione sua unidade</label>
+            <select id="unidadeSelect" required>
+              <option value="">-- Selecione --</option>
+              <option value="Hospital Regional Alto Sertão">Hospital Regional Alto Sertão</option>
+              <option value="Hospital Dr.Daniel Houly">Hospital Dr.Daniel Houly</option>
+              <option value="Hemoal Arapiraca">Hemoal Arapiraca</option>
+              <option value="Hemoal Maceió">Hemoal Maceió</option>
+              <option value="Hospital Geral Eestado">Hospital Geral Eestado</option>
+              <option value="Hospital da Mulher">Hospital da Mulher</option>
+              <option value="Hospital do Coração">Hospital do Coração</option>
+              <option value="Hospital Metropolitano">Hospital Metropolitano</option>
+              <option value="Hospital Regional da Mata">Hospital Regional da Mata</option>
+              <option value="Hospital da criança">Hospital da criança</option>
+              <option value="Hospital Ib Gatto Falcão">Hospital Ib Gatto Falcão</option>
+              <option value="Ouvidoria de Palmeira dos Indios">Ouvidoria de Palmeira dos Indios</option>
+              <option value="Ouvidoria de São José da Laje">Ouvidoria de São José da Laje</option>
+              <option value="Ouvidoria Arapiraca">Ouvidoria Arapiraca</option>
+              <option value="Ouvidoria Atalaia">Ouvidoria Atalaia</option>
+              <option value="Ouvidoria de São Miguel dos Campos">Ouvidoria de São Miguel dos Campos</option>
+              <option value="Ouvidoria Teotônio Vilela">Ouvidoria Teotônio Vilela</option>
+              <option value="Ouvidoria União dos Palmares">Ouvidoria União dos Palmares</option>
+              <option value="Admin">Administrador</option>
+            </select>
+          </div>
 
-<!-- MODAL DE LOGIN -->
-<div id="loginModal">
-  <div id="loginBox">
-    <h2>Login</h2>
+          <div class="form-group">
+            <label for="senhaInput">Senha</label>
+            <input type="password" id="senhaInput" placeholder="Digite sua senha" required>
+          </div>
 
-    <label>Selecione sua unidade:</label>
-    <select id="unidadeSelect">
-      <option value="">-- Selecione --</option>
-      <option value="Hospital Regional Alto Sertão">Hospital Regional Alto Sertão</option>
-      <option value="Hospital Dr.DanielHouly">Hospital Dr.DanielHouly</option>
-      <option value="Hemoal Arapiraca">Hemoal Arapiraca</option>
-      <option value="Hemoal Maceió">Hemoal Maceió</option>
-      <option value="Hospital Geral Eestado">Hospital Geral Eestado</option>
-      <option value="Hospital da Mulher">Hospital da Mulher</option>
-      <option value="Hospital do Coração">Hospital do Coração</option>
-      <option value="Hospital Metropolitano">Hospital Metropolitano</option>
-      <option value="Hospital Regional da Mata">Hospital Regional da Mata</option>
-      <option value="Ouvidoria de Palmeira dos Indios">Ouvidoria de Palmeira dos Indios</option>
-      <option value="Ouvidoria de São José da Laje">Ouvidoria de São José da Laje</option>
-      <option value="Ouvidoria Arapiraca">Ouvidoria Arapiraca</option>
-      <option value="Ouvidoria Atalaia">Ouvidoria Atalaia</option>
-      <option value="Ouvidoria de São Miguel dos Campos">Ouvidoria de São Miguel dos Campos</option>
-      <option value="Ouvidoria Teotônio Vilela">Ouvidoria Teotônio Vilela</option>
-      <option value="Ouvidoria União dos Palmares">Ouvidoria União dos Palmares</option>
-      <option value="Admin">Admin</option>
-    </select>
-
-
-    <label>Senha:</label>
-    <input type="password" id="senhaInput" placeholder="Digite sua senha">
-
-    <button onclick="fazerLogin()">Entrar</button>
-  </div>
-</div>
-
-<!-- CONTEÚDO DAS UNIDADES -->
-<div id="app">
-  <div class="content-box" id="boxUnidade">
-    <h2 id="titulo-unidade"></h2>
-
-    <label>Mês de referência:</label>
-    <input type="month" id="mesReferencia">
-
-    <div id="formCampos"></div>
-
-    <div class="botoes">
-      <button onclick="salvarDados()">Salvar Dados</button>
-      <button onclick="exportarXLS()">Exportar XLS</button>
-      <button class="btn-danger" onclick="limparDadosMes()">🗑️ Limpar Dados do Mês</button>
+          <button type="submit" class="btn-primary">Entrar</button>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div class="chart-container" id="chartsUnidade">
-    <div class="chart-box"><canvas id="graficoPizza" width="400" height="300"></canvas></div>
-    <div class="chart-box"><canvas id="graficoBarra" width="400" height="300"></canvas></div>
-  </div>
-</div>
+  <!-- TELA DE UNIDADE -->
+  <div id="unidadeScreen" style="display: none;">
+    <header class="main-header">
+      <div class="header-content">
+        <h1 id="titulo-unidade">Unidade</h1>
+        <button class="btn-logout" onclick="logout()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sair
+        </button>
+      </div>
+    </header>
 
-<!-- CONTEÚDO DO ADMIN -->
-<div id="adminPanel">
-  <div class="content-box">
-    <h2>Painel Geral - Monitoramento de Todas as Unidades</h2>
-    <div class="botoes">
-      <button onclick="gerarGraficosAdmin()">Atualizar Gráficos</button>
-      <button onclick="exportarGeral()">📊 Exportar Excel Geral</button>
-    </div>
+    <main class="main-content">
+      <div class="content-box">
+        <h2>Dados da Ouvidoria</h2>
+        
+        <div class="form-group">
+          <label for="mesReferencia">Mês de referência</label>
+          <input type="month" id="mesReferencia">
+        </div>
+
+        <div id="formCampos" class="form-grid"></div>
+
+        <div class="button-group">
+          <button class="btn-primary" onclick="salvarDados()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Salvar Dados
+          </button>
+          <button class="btn-secondary" onclick="exportarXLS()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Exportar XLS
+          </button>
+          <button class="btn-danger" onclick="limparDadosMes()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Limpar Dados do Mês
+          </button>
+        </div>
+      </div>
+
+      <div class="charts-container">
+        <div class="chart-box">
+          <h3>Distribuição de Dados</h3>
+          <canvas id="graficoPizza"></canvas>
+        </div>
+        <div class="chart-box">
+          <h3>Evolução Mensal</h3>
+          <canvas id="graficoBarra"></canvas>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <div class="chart-container">
-    <div class="chart-box">
-      <h3>Total de Demandas por Unidade</h3>
-      <canvas id="graficoComparativo" width="500" height="300"></canvas>
-    </div>
-    <div class="chart-box">
-      <h3>Evolução Mensal das Unidades</h3>
-      <canvas id="graficoEvolucao" width="500" height="300"></canvas>
-    </div>
-  </div>
-</div>
+  <!-- TELA DE ADMIN -->
+  <div id="adminScreen" style="display: none;">
+    <header class="main-header">
+      <div class="header-content">
+        <h1>Painel do Administrador</h1>
+        <button class="btn-logout" onclick="logout()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Sair
+        </button>
+      </div>
+    </header>
 
-<script src="script.js"></script>
+    <main class="main-content">
+      <div class="content-box">
+        <h2>Monitoramento de Todas as Unidades</h2>
+        
+        <div class="button-group">
+          <button class="btn-primary" onclick="gerarGraficosAdmin()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+            </svg>
+            Atualizar Gráficos
+          </button>
+          <button class="btn-secondary" onclick="exportarGeral()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Exportar Excel Geral
+          </button>
+        </div>
+      </div>
+
+      <div class="charts-container">
+        <div class="chart-box chart-box-large">
+          <h3>Total de Demandas por Unidade</h3>
+          <canvas id="graficoComparativo"></canvas>
+        </div>
+        <div class="chart-box chart-box-large">
+          <h3>Evolução Mensal das Unidades</h3>
+          <canvas id="graficoEvolucao"></canvas>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
