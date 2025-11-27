@@ -1,6 +1,6 @@
 /* ===================================
    CONFIGURAÇÕES E VARIÁVEIS GLOBAIS
-   =================================== */
+=================================== */
 
 // Campos do formulário
 const campos = [
@@ -8,6 +8,20 @@ const campos = [
   "presencial", "formulario", "email", "app", "sei", "telefone",
   "eouv", "ouvidorsus", "denuncia", "reclamacao", "elogio",
   "solicitacao", "sugestao"
+];
+
+// Perguntas da sessão de gestão
+const perguntasGestao = [
+  { id: 'plano_acao', texto: 'A unidade possui plano de ação formalizado para tratar as demandas da ouvidoria?' },
+  { id: 'reunioes_periodicas', texto: 'São realizadas reuniões periódicas para discutir os relatórios da ouvidoria?' },
+  { id: 'devolutiva_usuarios', texto: 'A unidade realiza devolutiva aos usuários sobre as providências adotadas?' },
+  { id: 'indicadores_acompanhados', texto: 'Há indicadores de ouvidoria monitorados mensalmente pela gestão?' },
+  { id: 'responsavel_definido', texto: 'Existe responsável formal designado para acompanhar as demandas da ouvidoria?' },
+  { id: 'capacitacao_equipe', texto: 'A equipe recebe capacitação periódica sobre atendimento ao usuário e ouvidoria?' },
+  { id: 'protocolo_atendimento', texto: 'Existe protocolo padronizado para tratamento de manifestações?' },
+  { id: 'prazo_resposta', texto: 'Os prazos de resposta às demandas são cumpridos regularmente?' },
+  { id: 'sistema_informatizado', texto: 'A unidade utiliza sistema informatizado para gestão das manifestações?' },
+  { id: 'divulgacao_ouvidoria', texto: 'Há divulgação ativa dos canais de ouvidoria para usuários e servidores?' }
 ];
 
 // Credenciais das unidades
@@ -30,6 +44,13 @@ const credenciais = {
   "Ouvidoria de São Miguel dos Campos": "123",
   "Ouvidoria Teotônio Vilela": "123",
   "Ouvidoria União dos Palmares": "123",
+  "Maceió": "123",
+  "Paulo Jacinto": "123",
+  "Boca da Mata": "123",
+  "São José da Tapera": "123",
+  "Dois Riachos": "123",
+  "Inhapi": "123",
+  "Coruripe": "123",
   "Admin": "admin123"
 };
 
@@ -42,7 +63,7 @@ let graficoEvolucao = null;
 
 /* ===================================
    INICIALIZAÇÃO
-   =================================== */
+=================================== */
 
 // Criar campos do formulário ao carregar a página
 function criarCampos() {
@@ -50,17 +71,17 @@ function criarCampos() {
   campos.forEach(c => {
     const group = document.createElement('div');
     group.className = 'form-group';
-    
+
     const label = document.createElement('label');
     label.textContent = formatarNomeCampo(c);
     label.setAttribute('for', c);
-    
+
     const input = document.createElement('input');
     input.type = 'number';
     input.id = c;
     input.min = '0';
     input.placeholder = '0';
-    
+
     group.appendChild(label);
     group.appendChild(input);
     div.appendChild(group);
@@ -99,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* ===================================
    AUTENTICAÇÃO E NAVEGAÇÃO
-   =================================== */
+=================================== */
 
 // Fazer login
 function fazerLogin() {
@@ -119,7 +140,7 @@ function fazerLogin() {
   // Verificar credenciais
   if (credenciais[unidade] && credenciais[unidade] === senha) {
     unidadeAtual = unidade;
-    
+
     // Ocultar tela de login
     document.getElementById('loginScreen').style.display = 'none';
 
@@ -131,11 +152,11 @@ function fazerLogin() {
       // Mostrar painel da unidade
       document.getElementById('unidadeScreen').style.display = 'block';
       document.getElementById('titulo-unidade').textContent = unidade;
-      
+
       // Configurar evento de mudança de mês
       const mesInput = document.getElementById('mesReferencia');
       mesInput.addEventListener('change', preencherCamposExistentes);
-      
+
       // Definir mês atual como padrão
       const hoje = new Date();
       const mesAtual = hoje.toISOString().slice(0, 7);
@@ -183,6 +204,7 @@ function logout() {
   // Ocultar todas as telas
   document.getElementById('unidadeScreen').style.display = 'none';
   document.getElementById('adminScreen').style.display = 'none';
+  document.getElementById('gestorScreen').style.display = 'none';
 
   // Mostrar tela de login
   document.getElementById('loginScreen').style.display = 'flex';
@@ -193,7 +215,7 @@ function logout() {
 
 /* ===================================
    GERENCIAMENTO DE DADOS - UNIDADE
-   =================================== */
+=================================== */
 
 // Preencher campos com dados existentes
 function preencherCamposExistentes() {
@@ -220,7 +242,7 @@ function preencherCamposExistentes() {
         input.value = '';
       }
     });
-    
+
     // Destruir gráficos
     if (graficoPizza) {
       graficoPizza.destroy();
@@ -236,7 +258,7 @@ function preencherCamposExistentes() {
 // Salvar dados
 function salvarDados() {
   const mes = document.getElementById('mesReferencia').value;
-  
+
   if (!mes) {
     alert("Por favor, selecione o mês de referência.");
     return;
@@ -264,14 +286,14 @@ function salvarDados() {
 // Limpar dados do mês
 function limparDadosMes() {
   const mes = document.getElementById('mesReferencia').value;
-  
+
   if (!mes) {
     alert("Por favor, selecione o mês que deseja limpar.");
     return;
   }
 
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
-  
+
   if (!json[unidadeAtual] || !json[unidadeAtual][mes]) {
     alert("Não há dados salvos para este mês.");
     return;
@@ -308,7 +330,7 @@ function limparDadosMes() {
 
 /* ===================================
    GRÁFICOS - UNIDADE
-   =================================== */
+=================================== */
 
 // Gerar gráficos da unidade
 function gerarGraficos() {
@@ -317,7 +339,7 @@ function gerarGraficos() {
 
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const dados = json[unidadeAtual]?.[mes];
-  
+
   if (!dados) return;
 
   // Gráfico de Pizza
@@ -394,7 +416,7 @@ function gerarGraficoBarra() {
 
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const dadosUnidade = json[unidadeAtual];
-  
+
   if (!dadosUnidade) return;
 
   const meses = Object.keys(dadosUnidade).sort();
@@ -442,7 +464,7 @@ function gerarGraficoBarra() {
 
 /* ===================================
    GRÁFICOS - ADMINISTRADOR
-   =================================== */
+=================================== */
 
 // Gerar gráficos administrativos
 function gerarGraficosAdmin() {
@@ -535,7 +557,7 @@ function gerarGraficoEvolucao(json, unidades) {
   const datasets = unidades.map((u, i) => {
     const dados = mesesUnicos.map(m => json[u]?.[m]?.total || 0);
     const cor = cores[i % cores.length];
-    
+
     return {
       label: u,
       data: dados,
@@ -587,20 +609,141 @@ function gerarGraficoEvolucao(json, unidades) {
 }
 
 /* ===================================
+   GESTÃO - NAVEGAÇÃO E PERGUNTAS
+=================================== */
+
+// Abrir tela de gestão
+function abrirGestor() {
+  if (!unidadeAtual || unidadeAtual === 'Admin') {
+    alert('Sessão de gestão disponível apenas para unidades.');
+    return;
+  }
+  
+  document.getElementById('unidadeScreen').style.display = 'none';
+  document.getElementById('gestorScreen').style.display = 'block';
+  document.getElementById('gestorUnidade').textContent = unidadeAtual;
+
+  criarPerguntasGestao();
+  carregarGestaoExistente();
+}
+
+// Voltar para tela da unidade
+function voltarParaUnidade() {
+  document.getElementById('gestorScreen').style.display = 'none';
+  document.getElementById('unidadeScreen').style.display = 'block';
+}
+
+// Criar perguntas de gestão com checkboxes
+function criarPerguntasGestao() {
+  const container = document.getElementById('gestorPerguntas');
+  if (!container) return;
+  
+  container.innerHTML = '';
+
+  perguntasGestao.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'checkbox-item';
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = p.id;
+
+    const label = document.createElement('label');
+    label.setAttribute('for', p.id);
+    label.textContent = p.texto;
+
+    item.appendChild(input);
+    item.appendChild(label);
+    container.appendChild(item);
+
+    // Permitir clicar em todo o item para marcar
+    item.addEventListener('click', function(e) {
+      if (e.target !== input) {
+        input.checked = !input.checked;
+      }
+    });
+  });
+}
+
+// Carregar dados de gestão existentes
+function carregarGestaoExistente() {
+  const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
+  const dados = json[unidadeAtual];
+  
+  if (!dados) return;
+
+  perguntasGestao.forEach(p => {
+    const input = document.getElementById(p.id);
+    if (input) {
+      input.checked = !!dados[p.id];
+    }
+  });
+}
+
+// Salvar sessão de gestão
+function salvarGestao() {
+  if (!unidadeAtual || unidadeAtual === 'Admin') {
+    alert('Unidade inválida para salvar gestão.');
+    return;
+  }
+
+  const dados = {};
+  perguntasGestao.forEach(p => {
+    const input = document.getElementById(p.id);
+    dados[p.id] = input && input.checked ? 1 : 0;
+  });
+
+  const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
+  json[unidadeAtual] = dados;
+  localStorage.setItem('dadosGestao', JSON.stringify(json));
+
+  alert('Sessão de gestão salva com sucesso!');
+}
+
+// Exportar sessão de gestão para Excel
+function exportarGestaoXLS() {
+  const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
+  
+  if (!json[unidadeAtual]) {
+    alert('Não há sessão de gestão salva para esta unidade.');
+    return;
+  }
+
+  const dados = json[unidadeAtual];
+
+  // Monta objeto para Excel
+  const linha = {
+    'Unidade': unidadeAtual
+  };
+
+  perguntasGestao.forEach(p => {
+    const valor = dados[p.id] ? 'Sim' : 'Não';
+    linha[p.texto] = valor;
+  });
+
+  const ws = XLSX.utils.json_to_sheet([linha]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Gestao');
+
+  const nomeArquivo = `Gestao_${unidadeAtual.replace(/\s+/g, '_')}.xlsx`;
+  XLSX.writeFile(wb, nomeArquivo);
+}
+
+/* ===================================
    EXPORTAÇÃO DE DADOS
-   =================================== */
+=================================== */
 
 // Exportar dados da unidade para Excel
 function exportarXLS() {
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
-  
+
   if (!json[unidadeAtual]) {
     alert("Não há dados para exportar.");
     return;
   }
 
   const linhas = [];
-  
+
   for (let mes in json[unidadeAtual]) {
     const dadosMes = json[unidadeAtual][mes];
     linhas.push({
@@ -618,7 +761,7 @@ function exportarXLS() {
   const ws = XLSX.utils.json_to_sheet(linhas);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Ouvidoria");
-  
+
   const nomeArquivo = `Ouvidoria_${unidadeAtual.replace(/\s+/g, '_')}.xlsx`;
   XLSX.writeFile(wb, nomeArquivo);
 }
@@ -630,7 +773,7 @@ function exportarGeral() {
 
   for (let unidade in json) {
     if (unidade === 'Admin') continue;
-    
+
     for (let mes in json[unidade]) {
       const dadosMes = json[unidade][mes];
       linhas.push({
@@ -649,7 +792,7 @@ function exportarGeral() {
   const ws = XLSX.utils.json_to_sheet(linhas);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Ouvidoria Geral");
-  
+
   const hoje = new Date().toISOString().slice(0, 10);
   const nomeArquivo = `Ouvidoria_Geral_${hoje}.xlsx`;
   XLSX.writeFile(wb, nomeArquivo);
@@ -657,7 +800,7 @@ function exportarGeral() {
 
 /* ===================================
    UTILITÁRIOS
-   =================================== */
+=================================== */
 
 // Formatar mês para exibição
 function formatarMes(mes) {
