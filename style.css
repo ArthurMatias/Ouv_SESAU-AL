@@ -1,6 +1,4 @@
-/* ===================================
-   RESET E CONFIGURAÇÕES GLOBAIS
-=================================== */
+/*RESET E CONFIGURAÇÕES GLOBAIS*/
 * {
   margin: 0;
   padding: 0;
@@ -34,9 +32,7 @@ body {
   min-height: 100vh;
 }
 
-/* ===================================
-   TELA DE LOGIN - SPLIT SCREEN
-=================================== */
+/*TELA DE LOGIN - SPLIT SCREEN*/
 #loginScreen {
   display: flex;
   min-height: 100vh;
@@ -143,9 +139,7 @@ body {
   font-size: 1rem;
 }
 
-/* ===================================
-   FORMULÁRIOS
-=================================== */
+/*FORMULÁRIOS*/
 .form-group {
   margin-bottom: 24px;
 }
@@ -184,9 +178,7 @@ body {
   margin-top: 24px;
 }
 
-/* ===================================
-   FORMULÁRIO DE GESTÃO - CHECKBOXES
-=================================== */
+/*FORMULÁRIO DE GESTÃO - CHECKBOXES*/
 .gestao-form {
   display: flex;
   flex-direction: column;
@@ -228,9 +220,7 @@ body {
   flex: 1;
 }
 
-/* ===================================
-   BOTÕES
-=================================== */
+/*BOTÕES*/
 button {
   cursor: pointer;
   border: none;
@@ -324,9 +314,7 @@ button {
   min-width: 180px;
 }
 
-/* ===================================
-   HEADER PRINCIPAL
-=================================== */
+/*HEADER PRINCIPAL*/
 .main-header {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: white;
@@ -350,9 +338,7 @@ button {
   font-weight: 700;
 }
 
-/* ===================================
-   CONTEÚDO PRINCIPAL
-=================================== */
+/*CONTEÚDO PRINCIPAL*/
 .main-content {
   max-width: 1400px;
   margin: 0 auto;
@@ -381,9 +367,7 @@ button {
   font-weight: 600;
 }
 
-/* ===================================
-   GRÁFICOS
-=================================== */
+/*GRÁFICOS*/
 .charts-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -414,9 +398,7 @@ button {
   height: auto !important;
 }
 
-/* ===================================
-   RESPONSIVIDADE - MOBILE
-=================================== */
+/*RESPONSIVIDADE - MOBILE*/
 @media (max-width: 1024px) {
   #loginScreen {
     flex-direction: column;
@@ -534,9 +516,7 @@ button {
   }
 }
 
-/* ===================================
-   ANIMAÇÕES
-=================================== */
+/*ANIMAÇÕES*/
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -553,9 +533,7 @@ button {
   animation: fadeIn 0.4s ease-out;
 }
 
-/* ===================================
-   UTILITÁRIOS
-=================================== */
+/*UTILITÁRIOS*/
 .hidden {
   display: none !important;
 }

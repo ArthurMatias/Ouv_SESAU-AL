@@ -1,7 +1,3 @@
-/* ===================================
-   CONFIGURAÇÕES E VARIÁVEIS GLOBAIS
-=================================== */
-
 // Campos do formulário
 const campos = [
   "total", "solucionadas", "identificadas", "anonimas", "sigilosas",
@@ -61,10 +57,6 @@ let graficoBarra = null;
 let graficoComparativo = null;
 let graficoEvolucao = null;
 
-/* ===================================
-   INICIALIZAÇÃO
-=================================== */
-
 // Criar campos do formulário ao carregar a página
 function criarCampos() {
   const div = document.getElementById('formCampos');
@@ -117,10 +109,6 @@ function formatarNomeCampo(campo) {
 document.addEventListener('DOMContentLoaded', function() {
   criarCampos();
 });
-
-/* ===================================
-   AUTENTICAÇÃO E NAVEGAÇÃO
-=================================== */
 
 // Fazer login
 function fazerLogin() {
@@ -212,10 +200,6 @@ function logout() {
   // Resetar estado
   unidadeAtual = '';
 }
-
-/* ===================================
-   GERENCIAMENTO DE DADOS - UNIDADE
-=================================== */
 
 // Preencher campos com dados existentes
 function preencherCamposExistentes() {
@@ -327,10 +311,6 @@ function limparDadosMes() {
 
   alert("Dados do mês removidos com sucesso!");
 }
-
-/* ===================================
-   GRÁFICOS - UNIDADE
-=================================== */
 
 // Gerar gráficos da unidade
 function gerarGraficos() {
@@ -461,10 +441,6 @@ function gerarGraficoBarra() {
     }
   });
 }
-
-/* ===================================
-   GRÁFICOS - ADMINISTRADOR
-=================================== */
 
 // Gerar gráficos administrativos
 function gerarGraficosAdmin() {
@@ -608,10 +584,6 @@ function gerarGraficoEvolucao(json, unidades) {
   });
 }
 
-/* ===================================
-   GESTÃO - NAVEGAÇÃO E PERGUNTAS
-=================================== */
-
 // Abrir tela de gestão
 function abrirGestor() {
   if (!unidadeAtual || unidadeAtual === 'Admin') {
@@ -729,10 +701,6 @@ function exportarGestaoXLS() {
   XLSX.writeFile(wb, nomeArquivo);
 }
 
-/* ===================================
-   EXPORTAÇÃO DE DADOS
-=================================== */
-
 // Exportar dados da unidade para Excel
 function exportarXLS() {
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
@@ -797,10 +765,6 @@ function exportarGeral() {
   const nomeArquivo = `Ouvidoria_Geral_${hoje}.xlsx`;
   XLSX.writeFile(wb, nomeArquivo);
 }
-
-/* ===================================
-   UTILITÁRIOS
-=================================== */
 
 // Formatar mês para exibição
 function formatarMes(mes) {

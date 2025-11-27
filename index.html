@@ -214,6 +214,7 @@
 <div id="gestorScreen" style="display: none;">
   <header class="main-header">
     <div class="header-content">
+
       <h1>Sessão de Gestão - <span id="gestorUnidade"></span></h1>
       <div style="display:flex; gap:8px;">
         <button class="btn-gestor" onclick="voltarParaUnidade()">
@@ -239,6 +240,11 @@
       <h2>Perguntas de Gestão</h2>
       <p class="login-description">Marque as opções conforme avaliação da unidade.</p>
 
+      <div class="form-group">
+        <label for="mesReferencia">Mês de referência</label>
+        <input type="month" id="mesReferencia">
+      </div>
+      
       <div id="gestorPerguntas" class="gestao-form">
         <!-- perguntas serão geradas via JS -->
       </div>
