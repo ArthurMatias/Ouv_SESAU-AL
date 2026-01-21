@@ -1,4 +1,4 @@
-// Campos do formulário
+// Campos do formulário da unidade
 const campos = [
   "total", "solucionadas", "identificadas", "anonimas", "sigilosas",
   "presencial", "formulario", "email", "app", "sei", "telefone",
@@ -6,18 +6,20 @@ const campos = [
   "solicitacao", "sugestao"
 ];
 
-// Perguntas da sessão de gestão
+// Perguntas da sessão de gestão (checkbox)
 const perguntasGestao = [
-  { id: 'plano_acao', texto: 'A unidade possui plano de ação formalizado para tratar as demandas da ouvidoria?' },
-  { id: 'reunioes_periodicas', texto: 'São realizadas reuniões periódicas para discutir os relatórios da ouvidoria?' },
-  { id: 'devolutiva_usuarios', texto: 'A unidade realiza devolutiva aos usuários sobre as providências adotadas?' },
-  { id: 'indicadores_acompanhados', texto: 'Há indicadores de ouvidoria monitorados mensalmente pela gestão?' },
-  { id: 'responsavel_definido', texto: 'Existe responsável formal designado para acompanhar as demandas da ouvidoria?' },
-  { id: 'capacitacao_equipe', texto: 'A equipe recebe capacitação periódica sobre atendimento ao usuário e ouvidoria?' },
-  { id: 'protocolo_atendimento', texto: 'Existe protocolo padronizado para tratamento de manifestações?' },
-  { id: 'prazo_resposta', texto: 'Os prazos de resposta às demandas são cumpridos regularmente?' },
-  { id: 'sistema_informatizado', texto: 'A unidade utiliza sistema informatizado para gestão das manifestações?' },
-  { id: 'divulgacao_ouvidoria', texto: 'Há divulgação ativa dos canais de ouvidoria para usuários e servidores?' }
+  { id: 'plano_acao', texto: 'Há plano de ação para as demandas?' },
+  { id: 'reunioes_periodicas', texto: 'Há reuniões periódicas?' },
+  { id: 'devolutiva_usuarios', texto: 'Há devolutivas aos usuários das providências adotadas?' },
+  { id: 'indicadores_acompanhados', texto: 'Há indicadores mensais de monitoramento?' },
+  { id: 'responsavel_definido', texto: 'Há responsável formal designado as demandas?' },
+  { id: 'capacitacao_equipe', texto: 'Há capacitação periódicas?' },
+  { id: 'protocolo_atendimento', texto: 'Há protocolos padronizados?' },
+  { id: 'prazo_resposta', texto: 'Há prazos de resposta às demandas?' },
+  { id: 'sistema_informatizado', texto: 'Utiliza sistema informatizado para gestão das manifestações?' },
+  { id: 'divulgacao_ouvidoria', texto: 'Há divulgação ativa dos canais?' },
+  { id: 'infra_ouvidoria', texto: 'Boa infraestrutura da ouvidoria?' },
+  { id: 'infra_unidade', texto: 'Boa infraestrutura da unidade?' }
 ];
 
 // Credenciais das unidades
@@ -26,7 +28,7 @@ const credenciais = {
   "Hospital Dr.Daniel Houly": "123",
   "Hemoal Arapiraca": "123",
   "Hemoal Maceió": "123",
-  "Hospital Geral Eestado": "123",
+  "Hospital Geral do Estado": "123",
   "Hospital da Mulher": "123",
   "Hospital do Coração": "123",
   "Hospital Metropolitano": "123",
@@ -57,7 +59,8 @@ let graficoBarra = null;
 let graficoComparativo = null;
 let graficoEvolucao = null;
 
-// Criar campos do formulário ao carregar a página
+/*INICIALIZAÇÃO*/
+// Criar campos numéricos da unidade
 function criarCampos() {
   const div = document.getElementById('formCampos');
   campos.forEach(c => {
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
   criarCampos();
 });
 
-// Fazer login
+/*AUTENTICAÇÃO E NAVEGAÇÃO*/
 function fazerLogin() {
   const unidade = document.getElementById('unidadeSelect').value;
   const senha = document.getElementById('senhaInput').value.trim();
@@ -125,27 +128,21 @@ function fazerLogin() {
     return;
   }
 
-  // Verificar credenciais
   if (credenciais[unidade] && credenciais[unidade] === senha) {
     unidadeAtual = unidade;
 
-    // Ocultar tela de login
     document.getElementById('loginScreen').style.display = 'none';
 
     if (unidade === "Admin") {
-      // Mostrar painel administrativo
       document.getElementById('adminScreen').style.display = 'block';
       gerarGraficosAdmin();
     } else {
-      // Mostrar painel da unidade
       document.getElementById('unidadeScreen').style.display = 'block';
       document.getElementById('titulo-unidade').textContent = unidade;
 
-      // Configurar evento de mudança de mês
       const mesInput = document.getElementById('mesReferencia');
       mesInput.addEventListener('change', preencherCamposExistentes);
 
-      // Definir mês atual como padrão
       const hoje = new Date();
       const mesAtual = hoje.toISOString().slice(0, 7);
       mesInput.value = mesAtual;
@@ -156,52 +153,35 @@ function fazerLogin() {
   }
 }
 
-// Fazer logout
 function logout() {
   if (!confirm("Deseja realmente sair do sistema?")) {
     return;
   }
 
-  // Destruir gráficos
-  if (graficoPizza) {
-    graficoPizza.destroy();
-    graficoPizza = null;
-  }
-  if (graficoBarra) {
-    graficoBarra.destroy();
-    graficoBarra = null;
-  }
-  if (graficoComparativo) {
-    graficoComparativo.destroy();
-    graficoComparativo = null;
-  }
-  if (graficoEvolucao) {
-    graficoEvolucao.destroy();
-    graficoEvolucao = null;
-  }
+  if (graficoPizza) { graficoPizza.destroy(); graficoPizza = null; }
+  if (graficoBarra) { graficoBarra.destroy(); graficoBarra = null; }
+  if (graficoComparativo) { graficoComparativo.destroy(); graficoComparativo = null; }
+  if (graficoEvolucao) { graficoEvolucao.destroy(); graficoEvolucao = null; }
 
-  // Limpar campos
   document.getElementById('senhaInput').value = '';
   document.getElementById('unidadeSelect').value = '';
-  document.getElementById('mesReferencia').value = '';
+  const mesRef = document.getElementById('mesReferencia');
+  if (mesRef) mesRef.value = '';
   campos.forEach(c => {
     const input = document.getElementById(c);
     if (input) input.value = '';
   });
 
-  // Ocultar todas as telas
   document.getElementById('unidadeScreen').style.display = 'none';
   document.getElementById('adminScreen').style.display = 'none';
   document.getElementById('gestorScreen').style.display = 'none';
 
-  // Mostrar tela de login
   document.getElementById('loginScreen').style.display = 'flex';
 
-  // Resetar estado
   unidadeAtual = '';
 }
 
-// Preencher campos com dados existentes
+/*DADOS - UNIDADE*/
 function preencherCamposExistentes() {
   const mes = document.getElementById('mesReferencia').value;
   if (!mes) return;
@@ -210,56 +190,36 @@ function preencherCamposExistentes() {
   const dados = json[unidadeAtual]?.[mes];
 
   if (dados) {
-    // Preencher campos
     campos.forEach(c => {
       const input = document.getElementById(c);
-      if (input) {
-        input.value = dados[c] || 0;
-      }
+      if (input) input.value = dados[c] || 0;
     });
     gerarGraficos();
   } else {
-    // Limpar campos se não houver dados
     campos.forEach(c => {
       const input = document.getElementById(c);
-      if (input) {
-        input.value = '';
-      }
+      if (input) input.value = '';
     });
-
-    // Destruir gráficos
-    if (graficoPizza) {
-      graficoPizza.destroy();
-      graficoPizza = null;
-    }
-    if (graficoBarra) {
-      graficoBarra.destroy();
-      graficoBarra = null;
-    }
+    if (graficoPizza) { graficoPizza.destroy(); graficoPizza = null; }
+    if (graficoBarra) { graficoBarra.destroy(); graficoBarra = null; }
   }
 }
 
-// Salvar dados
 function salvarDados() {
   const mes = document.getElementById('mesReferencia').value;
-
   if (!mes) {
     alert("Por favor, selecione o mês de referência.");
     return;
   }
 
-  // Coletar dados dos campos
   const dados = {};
   campos.forEach(c => {
     const input = document.getElementById(c);
     dados[c] = Number(input.value) || 0;
   });
 
-  // Salvar no localStorage
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
-  if (!json[unidadeAtual]) {
-    json[unidadeAtual] = {};
-  }
+  if (!json[unidadeAtual]) json[unidadeAtual] = {};
   json[unidadeAtual][mes] = dados;
   localStorage.setItem('dadosOuvidoria', JSON.stringify(json));
 
@@ -267,10 +227,8 @@ function salvarDados() {
   gerarGraficos();
 }
 
-// Limpar dados do mês
 function limparDadosMes() {
   const mes = document.getElementById('mesReferencia').value;
-
   if (!mes) {
     alert("Por favor, selecione o mês que deseja limpar.");
     return;
@@ -287,49 +245,33 @@ function limparDadosMes() {
     return;
   }
 
-  // Remover dados do mês
   delete json[unidadeAtual][mes];
   localStorage.setItem('dadosOuvidoria', JSON.stringify(json));
 
-  // Limpar campos
   campos.forEach(c => {
     const input = document.getElementById(c);
-    if (input) {
-      input.value = '';
-    }
+    if (input) input.value = '';
   });
 
-  // Destruir gráficos
-  if (graficoPizza) {
-    graficoPizza.destroy();
-    graficoPizza = null;
-  }
-  if (graficoBarra) {
-    graficoBarra.destroy();
-    graficoBarra = null;
-  }
+  if (graficoPizza) { graficoPizza.destroy(); graficoPizza = null; }
+  if (graficoBarra) { graficoBarra.destroy(); graficoBarra = null; }
 
   alert("Dados do mês removidos com sucesso!");
 }
 
-// Gerar gráficos da unidade
+/*GRÁFICOS - UNIDADE*/
 function gerarGraficos() {
   const mes = document.getElementById('mesReferencia').value;
   if (!mes) return;
 
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const dados = json[unidadeAtual]?.[mes];
-
   if (!dados) return;
 
-  // Gráfico de Pizza
   gerarGraficoPizza(dados);
-
-  // Gráfico de Barras (evolução mensal)
   gerarGraficoBarra();
 }
 
-// Gráfico de Pizza
 function gerarGraficoPizza(dados) {
   const ctx = document.getElementById('graficoPizza');
   if (!ctx) return;
@@ -337,12 +279,8 @@ function gerarGraficoPizza(dados) {
   const labels = campos.map(c => formatarNomeCampo(c));
   const valores = campos.map(c => dados[c] || 0);
 
-  // Destruir gráfico anterior
-  if (graficoPizza) {
-    graficoPizza.destroy();
-  }
+  if (graficoPizza) graficoPizza.destroy();
 
-  // Criar novo gráfico
   graficoPizza = new Chart(ctx, {
     type: 'pie',
     data: {
@@ -367,18 +305,14 @@ function gerarGraficoPizza(dados) {
           position: 'bottom',
           labels: {
             padding: 15,
-            font: {
-              size: 11
-            }
+            font: { size: 11 }
           }
         },
         tooltip: {
           callbacks: {
             label: function(context) {
               let label = context.label || '';
-              if (label) {
-                label += ': ';
-              }
+              if (label) label += ': ';
               label += context.parsed;
               return label;
             }
@@ -389,25 +323,19 @@ function gerarGraficoPizza(dados) {
   });
 }
 
-// Gráfico de Barras (evolução mensal)
 function gerarGraficoBarra() {
   const ctx = document.getElementById('graficoBarra');
   if (!ctx) return;
 
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const dadosUnidade = json[unidadeAtual];
-
   if (!dadosUnidade) return;
 
   const meses = Object.keys(dadosUnidade).sort();
   const totais = meses.map(m => dadosUnidade[m].total || 0);
 
-  // Destruir gráfico anterior
-  if (graficoBarra) {
-    graficoBarra.destroy();
-  }
+  if (graficoBarra) graficoBarra.destroy();
 
-  // Criar novo gráfico
   graficoBarra = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -433,16 +361,14 @@ function gerarGraficoBarra() {
       scales: {
         y: {
           beginAtZero: true,
-          ticks: {
-            stepSize: 1
-          }
+          ticks: { stepSize: 1 }
         }
       }
     }
   });
 }
 
-// Gerar gráficos administrativos
+/*GRÁFICOS - ADMIN*/
 function gerarGraficosAdmin() {
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const unidades = Object.keys(json).filter(u => u !== 'Admin');
@@ -452,30 +378,22 @@ function gerarGraficosAdmin() {
     return;
   }
 
-  // Gráfico Comparativo
   gerarGraficoComparativo(json, unidades);
-
-  // Gráfico de Evolução
   gerarGraficoEvolucao(json, unidades);
+  gerarDocumentosAdmin();
 }
 
-// Gráfico Comparativo (total por unidade)
 function gerarGraficoComparativo(json, unidades) {
   const ctx = document.getElementById('graficoComparativo');
   if (!ctx) return;
 
-  // Calcular total por unidade (soma de todos os meses)
   const totaisUnidades = unidades.map(u => {
     const meses = Object.values(json[u] || {});
     return meses.reduce((soma, m) => soma + (m.total || 0), 0);
   });
 
-  // Destruir gráfico anterior
-  if (graficoComparativo) {
-    graficoComparativo.destroy();
-  }
+  if (graficoComparativo) graficoComparativo.destroy();
 
-  // Criar novo gráfico
   graficoComparativo = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -504,36 +422,29 @@ function gerarGraficoComparativo(json, unidades) {
         }
       },
       scales: {
-        x: {
-          beginAtZero: true
-        }
+        x: { beginAtZero: true }
       }
     }
   });
 }
 
-// Gráfico de Evolução Mensal
 function gerarGraficoEvolucao(json, unidades) {
   const ctx = document.getElementById('graficoEvolucao');
   if (!ctx) return;
 
-  // Obter todos os meses únicos
   const mesesUnicos = [...new Set(
     unidades.flatMap(u => Object.keys(json[u] || {}))
   )].sort();
 
-  // Cores para cada unidade
   const cores = [
     '#007B8F', '#E85F5C', '#2CA58D', '#E8C547',
     '#B2B1CF', '#71B48D', '#A267AC', '#6D597A',
     '#355070', '#B56576', '#EAAC8B', '#89B0AE'
   ];
 
-  // Criar datasets
   const datasets = unidades.map((u, i) => {
     const dados = mesesUnicos.map(m => json[u]?.[m]?.total || 0);
     const cor = cores[i % cores.length];
-
     return {
       label: u,
       data: dados,
@@ -545,12 +456,8 @@ function gerarGraficoEvolucao(json, unidades) {
     };
   });
 
-  // Destruir gráfico anterior
-  if (graficoEvolucao) {
-    graficoEvolucao.destroy();
-  }
+  if (graficoEvolucao) graficoEvolucao.destroy();
 
-  // Criar novo gráfico
   graficoEvolucao = new Chart(ctx, {
     type: 'line',
     data: {
@@ -566,50 +473,109 @@ function gerarGraficoEvolucao(json, unidades) {
           position: 'bottom',
           labels: {
             padding: 15,
-            font: {
-              size: 11
-            }
+            font: { size: 11 }
           }
         }
       },
       scales: {
         y: {
           beginAtZero: true,
-          ticks: {
-            stepSize: 1
-          }
+          ticks: { stepSize: 1 }
         }
       }
     }
   });
 }
 
-// Abrir tela de gestão
+/*DOCUMENTOS ADMIN*/
+function gerarDocumentosAdmin() {
+  const jsonOuvidoria = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
+  const jsonGestao = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
+  const container = document.getElementById('unidadesDocs');
+  container.innerHTML = '';
+
+  Object.keys(jsonOuvidoria).filter(u => u !== 'Admin').forEach(unidade => {
+    const divUnidade = document.createElement('div');
+    divUnidade.innerHTML = `<h3>${unidade}</h3>`;
+
+    const tabela = document.createElement('table');
+    const thead = document.createElement('thead');
+    const tbody = document.createElement('tbody');
+
+    // Cabeçalho da tabela
+    const trHead = document.createElement('tr');
+    trHead.innerHTML = `
+      <th>Mês</th>
+      <th>Total</th>
+      <th>Solucionadas</th>
+      <th>Identificadas</th>
+      <th>Anônimas</th>
+      <th>Sigilosas</th>
+      ${perguntasGestao.map(p => `<th>${p.texto}</th>`).join('')}
+    `;
+    thead.appendChild(trHead);
+
+    // Dados mensais
+    const meses = Object.keys(jsonOuvidoria[unidade] || {}).sort();
+    meses.forEach(mes => {
+      const tr = document.createElement('tr');
+      const dadosOuvidoria = jsonOuvidoria[unidade][mes];
+      const dadosGestao = (jsonGestao[unidade] && jsonGestao[unidade][mes]) || {};
+
+      tr.innerHTML = `
+        <td>${formatarMes(mes)}</td>
+        <td>${dadosOuvidoria.total || 0}</td>
+        <td>${dadosOuvidoria.solucionadas || 0}</td>
+        <td>${dadosOuvidoria.identificadas || 0}</td>
+        <td>${dadosOuvidoria.anonimas || 0}</td>
+        <td>${dadosOuvidoria.sigilosas || 0}</td>
+        ${perguntasGestao.map(p => `<td>${dadosGestao[p.id] ? 'Sim' : 'Não'}</td>`).join('')}
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tabela.appendChild(thead);
+    tabela.appendChild(tbody);
+    divUnidade.appendChild(tabela);
+    container.appendChild(divUnidade);
+  });
+}
+
+/*GESTÃO - NAVEGAÇÃO E PERGUNTAS*/
 function abrirGestor() {
   if (!unidadeAtual || unidadeAtual === 'Admin') {
     alert('Sessão de gestão disponível apenas para unidades.');
     return;
   }
-  
+
   document.getElementById('unidadeScreen').style.display = 'none';
   document.getElementById('gestorScreen').style.display = 'block';
   document.getElementById('gestorUnidade').textContent = unidadeAtual;
 
   criarPerguntasGestao();
+
+  const mesInputGestao = document.getElementById('mesGestao');
+
+  if (!mesInputGestao.value) {
+    const hoje = new Date();
+    const mesAtual = hoje.toISOString().slice(0, 7); // AAAA-MM
+    mesInputGestao.value = mesAtual;
+  }
+
+  mesInputGestao.onchange = carregarGestaoExistente;
+
   carregarGestaoExistente();
 }
 
-// Voltar para tela da unidade
 function voltarParaUnidade() {
   document.getElementById('gestorScreen').style.display = 'none';
   document.getElementById('unidadeScreen').style.display = 'block';
 }
 
-// Criar perguntas de gestão com checkboxes
 function criarPerguntasGestao() {
   const container = document.getElementById('gestorPerguntas');
   if (!container) return;
-  
+
   container.innerHTML = '';
 
   perguntasGestao.forEach(p => {
@@ -628,7 +594,6 @@ function criarPerguntasGestao() {
     item.appendChild(label);
     container.appendChild(item);
 
-    // Permitir clicar em todo o item para marcar
     item.addEventListener('click', function(e) {
       if (e.target !== input) {
         input.checked = !input.checked;
@@ -637,25 +602,35 @@ function criarPerguntasGestao() {
   });
 }
 
-// Carregar dados de gestão existentes
 function carregarGestaoExistente() {
+  const mes = document.getElementById('mesGestao').value;
+  if (!mes) return;
+
   const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
-  const dados = json[unidadeAtual];
-  
+  const dados = json[unidadeAtual]?.[mes];
+
+  perguntasGestao.forEach(p => {
+    const input = document.getElementById(p.id);
+    if (input) input.checked = false;
+  });
+
   if (!dados) return;
 
   perguntasGestao.forEach(p => {
     const input = document.getElementById(p.id);
-    if (input) {
-      input.checked = !!dados[p.id];
-    }
+    if (input) input.checked = !!dados[p.id];
   });
 }
 
-// Salvar sessão de gestão
 function salvarGestao() {
   if (!unidadeAtual || unidadeAtual === 'Admin') {
     alert('Unidade inválida para salvar gestão.');
+    return;
+  }
+
+  const mes = document.getElementById('mesGestao').value;
+  if (!mes) {
+    alert('Por favor, selecione o mês de referência da gestão.');
     return;
   }
 
@@ -666,26 +641,36 @@ function salvarGestao() {
   });
 
   const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
-  json[unidadeAtual] = dados;
+  if (!json[unidadeAtual]) json[unidadeAtual] = {};
+  json[unidadeAtual][mes] = dados;
   localStorage.setItem('dadosGestao', JSON.stringify(json));
 
   alert('Sessão de gestão salva com sucesso!');
 }
 
-// Exportar sessão de gestão para Excel
 function exportarGestaoXLS() {
   const json = JSON.parse(localStorage.getItem('dadosGestao') || '{}');
-  
+
   if (!json[unidadeAtual]) {
     alert('Não há sessão de gestão salva para esta unidade.');
     return;
   }
 
-  const dados = json[unidadeAtual];
+  const mes = document.getElementById('mesGestao').value;
+  if (!mes) {
+    alert('Por favor, selecione o mês de referência para exportar.');
+    return;
+  }
 
-  // Monta objeto para Excel
+  const dados = json[unidadeAtual][mes];
+  if (!dados) {
+    alert('Não há sessão de gestão salva para este mês.');
+    return;
+  }
+
   const linha = {
-    'Unidade': unidadeAtual
+    'Unidade': unidadeAtual,
+    'Mês': mes
   };
 
   perguntasGestao.forEach(p => {
@@ -697,11 +682,11 @@ function exportarGestaoXLS() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Gestao');
 
-  const nomeArquivo = `Gestao_${unidadeAtual.replace(/\s+/g, '_')}.xlsx`;
+  const nomeArquivo = `Gestao_${unidadeAtual.replace(/\s+/g, '_')}_${mes}.xlsx`;
   XLSX.writeFile(wb, nomeArquivo);
 }
 
-// Exportar dados da unidade para Excel
+/*EXPORTAÇÃO - UNIDADE E GERAL*/
 function exportarXLS() {
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
 
@@ -734,7 +719,6 @@ function exportarXLS() {
   XLSX.writeFile(wb, nomeArquivo);
 }
 
-// Exportar dados gerais (admin)
 function exportarGeral() {
   const json = JSON.parse(localStorage.getItem('dadosOuvidoria') || '{}');
   const linhas = [];
@@ -766,7 +750,7 @@ function exportarGeral() {
   XLSX.writeFile(wb, nomeArquivo);
 }
 
-// Formatar mês para exibição
+/*UTILITÁRIOS*/
 function formatarMes(mes) {
   const [ano, mesNum] = mes.split('-');
   const meses = [
