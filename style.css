@@ -38,7 +38,6 @@ body {
   min-height: 100vh;
 }
 
-/* Lado Esquerdo - Azul */
 .login-left {
   flex: 1;
   background: linear-gradient(135deg, #007B8F 0%, #005f6a 100%);
@@ -111,7 +110,6 @@ body {
   transform: translateX(-50%) translateY(-2px);
 }
 
-/* Lado Direito - Login Form */
 .login-right {
   flex: 1;
   background: var(--bg-white);
@@ -402,34 +400,361 @@ button {
 .admin-docs-container {
   margin-top: 32px;
   background: var(--bg-white);
-  padding: 24px;
+  padding: 28px;
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-md);
 }
 
 .admin-docs-container h2 {
   color: var(--primary-color);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   font-size: 1.3rem;
+  font-weight: 700;
 }
 
-.admin-docs-container table {
+/* =====================================================
+   BARRA DE BUSCA E FILTROS DO ADMIN
+   ===================================================== */
+
+.admin-search-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-light);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: var(--transition);
+}
+
+.admin-search-bar:focus-within {
+  border-color: var(--primary-color);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 143, 0.1);
+}
+
+.admin-search-bar svg {
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.admin-search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--text-dark);
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 24px;
+  padding: 0;
 }
 
-.admin-docs-container th,
-.admin-docs-container td {
-  border: 1px solid var(--border-color);
-  padding: 10px;
-  text-align: left;
+.admin-search-bar input::placeholder {
+  color: #aaa;
+}
+
+.admin-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+  flex: 1;
+}
+
+.admin-filter-group label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-filter-group select {
+  padding: 8px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
   font-size: 0.9rem;
+  color: var(--text-dark);
+  background: var(--bg-white);
+  transition: var(--transition);
+  cursor: pointer;
 }
 
-.admin-docs-container th {
-  background-color: var(--primary-color);
-  color: white;
+.admin-filter-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 143, 0.1);
+}
+
+.admin-result-count {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: rgba(0, 123, 143, 0.08);
+  padding: 6px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+
+/* =====================================================
+   TABELA ADMIN MELHORADA
+   ===================================================== */
+
+.admin-table-wrapper {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  min-width: 900px;
+}
+
+/* Cabeçalho */
+.admin-table thead tr:first-child th {
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 12px 14px;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--primary-dark);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  user-select: none;
+}
+
+.admin-table thead tr:first-child th:first-child {
+  border-radius: 10px 0 0 0;
+}
+
+.admin-table thead tr:first-child th:last-child {
+  border-radius: 0 10px 0 0;
+}
+
+.admin-table thead tr:first-child th .sort-icon {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin-left: 4px;
+}
+
+.admin-table thead tr:first-child th:hover .sort-icon {
+  opacity: 1;
+}
+
+/* Sub-cabeçalho para gestão */
+.admin-table .thead-sub th {
+  background: #005f6a;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 7px 14px;
+  white-space: nowrap;
+  position: sticky;
+  top: 41px;
+  z-index: 9;
+  border-bottom: 2px solid rgba(255,255,255,0.15);
+  cursor: default;
+}
+
+/* Coluna divisora de gestão */
+.admin-table .th-divider {
+  text-align: center;
+  background: #005f6a !important;
+  border-left: 3px solid rgba(255,255,255,0.3) !important;
+  font-size: 0.78rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* Colunas fixas (sticky) */
+.admin-table .th-sticky,
+.admin-table .td-sticky {
+  position: sticky;
+  left: 0;
+  z-index: 8;
+}
+
+.admin-table .th-sticky.th-mes,
+.admin-table .td-sticky2 {
+  position: sticky;
+  left: 180px;
+  z-index: 7;
+}
+
+.admin-table thead .th-sticky {
+  z-index: 15;
+}
+
+.admin-table thead .th-sticky.th-mes {
+  z-index: 14;
+}
+
+/* Linhas do corpo */
+.admin-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.admin-table tbody tr.row-even {
+  background: #ffffff;
+}
+
+.admin-table tbody tr.row-odd {
+  background: #f8fafb;
+}
+
+.admin-table tbody tr:hover {
+  background: #e8f4f5;
+}
+
+.admin-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eef1f3;
+  vertical-align: middle;
+  color: var(--text-dark);
+}
+
+/* Sticky cells no body */
+.admin-table .td-sticky {
+  background: inherit;
+  border-right: 1px solid #dde2e6;
+  min-width: 180px;
+  max-width: 220px;
+}
+
+.admin-table .td-sticky2 {
+  background: inherit;
+  border-right: 1px solid #dde2e6;
+  min-width: 90px;
+}
+
+/* Badge unidade */
+.unidade-badge {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--primary-dark);
+  line-height: 1.3;
+}
+
+/* Badge mês */
+.mes-badge {
+  display: inline-block;
+  background: rgba(0, 123, 143, 0.1);
+  color: var(--primary-dark);
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Números */
+.td-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  color: var(--text-medium);
+  min-width: 80px;
+}
+
+.td-total {
+  font-weight: 700;
+  color: var(--primary-dark) !important;
+  font-size: 0.95rem !important;
+}
+
+/* Células de gestão */
+.td-gestao {
+  text-align: center;
+  min-width: 80px;
+  border-left: 1px solid #eef1f3;
+}
+
+.td-gestao:first-of-type,
+.admin-table thead tr:first-child .th-divider + th {
+  border-left: 3px solid rgba(0,123,143,0.2);
+}
+
+.td-empty {
+  color: #ccc;
+  font-size: 1rem;
+}
+
+/* Badges Sim/Não */
+.badge-sim {
+  display: inline-flex;
+  align-items: center;
+  background: #e6f4ea;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badge-nao {
+  display: inline-flex;
+  align-items: center;
+  background: #fdecea;
+  color: #c62828;
+  border: 1px solid #ef9a9a;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Estado vazio */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px !important;
+  color: var(--text-light);
+}
+
+.empty-state svg {
+  display: block;
+  margin: 0 auto 12px;
+  opacity: 0.3;
+}
+
+.empty-state p {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Rodapé da tabela */
+.admin-table-footer {
+  margin-top: 12px;
+  font-size: 0.82rem;
+  color: var(--text-light);
+  text-align: right;
+  padding: 0 4px;
 }
 
 /*RESPONSIVIDADE - MOBILE*/
@@ -519,6 +844,19 @@ button {
   .form-grid {
     grid-template-columns: 1fr;
     gap: 16px;
+  }
+
+  .admin-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-filter-group {
+    min-width: unset;
+  }
+
+  .admin-result-count {
+    align-self: flex-start;
   }
 }
 
