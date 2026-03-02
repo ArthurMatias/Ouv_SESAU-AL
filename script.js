@@ -49,6 +49,34 @@ const credenciais = {
   "Boca da Mata": "123", "São José da Tapera": "123", "Dois Riachos": "123", "Inhapi": "123", "Coruripe": "123", "Admin": "admin123"
 };
 
+const municipios = {
+  "Hospital Regional Alto Sertão": "Delmiro Gouveia",
+  "Hospital Dr.Daniel Houly": "Arapiraca",
+  "Hemoal Arapiraca": "Arapiraca",
+  "Hemoal Maceió": "Maceió",
+  "Hospital Geral do Estado": "Maceió",
+  "Hospital da Mulher": "Maceió",
+  "Hospital do Coração": "Maceió",
+  "Hospital Metropolitano": "Maceió",
+  "Hospital Regional da Mata": "União dos Palmares",
+  "Hospital da criança": "Maceió",
+  "Hospital Ib Gatto Falcão": "Rio Largo",
+  "Ouvidoria de Palmeira dos Indios": "Palmeira dos Índios",
+  "Ouvidoria de São José da Laje": "São José da Laje",
+  "Ouvidoria Arapiraca": "Arapiraca",
+  "Ouvidoria Atalaia": "Atalaia",
+  "Ouvidoria de São Miguel dos Campos": "São Miguel dos Campos",
+  "Ouvidoria Teotônio Vilela": "Teotônio Vilela",
+  "Ouvidoria União dos Palmares": "União dos Palmares",
+  "Maceió": "Maceió",
+  "Paulo Jacinto": "Paulo Jacinto",
+  "Boca da Mata": "Boca da Mata",
+  "São José da Tapera": "São José da Tapera",
+  "Dois Riachos": "Dois Riachos",
+  "Inhapi": "Inhapi",
+  "Coruripe": "Coruripe"
+};
+
 let unidadeAtual = '';
 let graficoPizza = null, graficoBarra = null, graficoComparativo = null, graficoEvolucao = null;
 
@@ -298,7 +326,12 @@ window.exportarGeral = async function() {
         const dadosOuv = mesesOuv[mes];
         const dadosGes = (dGes[unidade] && dGes[unidade][mes]) ? dGes[unidade][mes] : {};
 
-        const linha = { 'Unidade': unidade, 'Mês': mes, ...dadosOuv };
+        const linha = {
+          'Unidade': unidade,
+          'Unidade da Federação e Município': municipios[unidade] || "",
+          'Mês': mes,
+          ...dadosOuv
+        };
 
         perguntasGestao.forEach(p => {
           const val = dadosGes[p.id];
@@ -327,7 +360,12 @@ window.exportarXLS = async function() {
   const dOuv = docOuv.exists() ? docOuv.data() : {};
   const dGes = docGes.exists() ? docGes.data() : {};
   const linhas = Object.keys(dOuv).map(mes => {
-    const l = { Unidade: unidadeAtual, Mês: mes, ...dOuv[mes] };
+    const l = {
+      Unidade: unidadeAtual,
+      "Unidade da Federação e Município": municipios[unidadeAtual] || "",
+      Mês: mes,
+      ...dOuv[mes]
+    };
     perguntasGestao.forEach(p => {
       const v = (dGes[mes] && dGes[mes][p.id]);
       l[p.texto] = v === 1 ? "Sim" : (v === 0 ? "Não" : "N/D");
@@ -339,6 +377,32 @@ window.exportarXLS = async function() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Unidade");
   XLSX.writeFile(wb, `Relatorio_${unidadeAtual}.xlsx`);
+};
+
+window.exportarGestaoXLS = async function() {
+  if (!unidadeAtual) return;
+  const docGes = await getDoc(doc(db, "dadosGestao", unidadeAtual));
+  const dGes = docGes.exists() ? docGes.data() : {};
+
+  const linhas = Object.keys(dGes).map(mes => {
+    const l = {
+      Unidade: unidadeAtual,
+      "Unidade da Federação e Município": municipios[unidadeAtual] || "",
+      Mês: mes
+    };
+    perguntasGestao.forEach(p => {
+      const v = dGes[mes][p.id];
+      l[p.texto] = v === 1 ? "Sim" : (v === 0 ? "Não" : "N/D");
+    });
+    return l;
+  });
+
+  if (linhas.length === 0) return alert("Sem dados de gestão para exportar.");
+
+  const ws = XLSX.utils.json_to_sheet(linhas);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Gestão");
+  XLSX.writeFile(wb, `Gestao_${unidadeAtual}.xlsx`);
 };
 
 function formatarMes(mes) {
