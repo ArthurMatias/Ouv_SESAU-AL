@@ -1,9 +1,9 @@
 // Campos do formulário da unidade
 const campos = [
-  "total", "solucionadas", "identificadas", "anonimas", "sigilosas",
-  "presencial", "formulario", "email", "app", "sei", "telefone",
-  "eouv", "ouvidorsus", "denuncia", "reclamacao", "elogio",
-  "solicitacao", "sugestao"
+  "total", "solucionadas", "identificadas", "andamento", "finalizadas",
+  "anonimas", "sigilosas", "presencial", "formulario", "email", "app",
+  "sei", "telefone", "eouv", "ouvidorsus", "denuncia",
+  "reclamacao", "elogio", "solicitacao", "sugestao", "dados"
 ];
 
 // Perguntas da sessão de gestão (checkbox)
@@ -49,6 +49,7 @@ const credenciais = {
   "Dois Riachos": "123",
   "Inhapi": "123",
   "Coruripe": "123",
+  "Ouvidoria Sesau": "123",
   "Admin": "admin123"
 };
 
@@ -90,6 +91,8 @@ function formatarNomeCampo(campo) {
     'total': 'Total de Demandas',
     'solucionadas': 'Demandas Solucionadas',
     'identificadas': 'Demandas Identificadas',
+    'Andamento':'Demandas em Andamento',
+    'Finalizadas':'Demandas Finalizadas',
     'anonimas': 'Demandas Anônimas',
     'sigilosas': 'Demandas Sigilosas',
     'presencial': 'Presencial',
@@ -104,7 +107,8 @@ function formatarNomeCampo(campo) {
     'reclamacao': 'Reclamação',
     'elogio': 'Elogio',
     'solicitacao': 'Solicitação',
-    'sugestao': 'Sugestão'
+    'sugestao': 'Sugestão',
+    'dados':'Insuficiencia de Dados'
   };
   return nomes[campo] || campo.charAt(0).toUpperCase() + campo.slice(1);
 }
